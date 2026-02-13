@@ -40,6 +40,13 @@ function formatLastLoginTime(timestamp) {
 Page({
     data: {
         appName: "小程序",
+        // 示例用户（当未从缓存读取到性别 / 昵称时使用）
+        demoUser: {
+            nickname: '小明',
+            gender: 'male'
+        },
+        // 头像尺寸（像素），页面可自行设置
+        avatarSize: 52,
         // 设置进度
         setupProgress: {
             location: false,   // 位置授权

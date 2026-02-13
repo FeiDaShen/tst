@@ -414,11 +414,6 @@ Page({
         });
     },
 
-
-
-
-
-
     // 确认打赏
     confirmReward: function () {
         const amount = this.data.customReward ? parseFloat(this.data.customReward) : this.data.selectedReward;
@@ -481,7 +476,6 @@ Page({
             });
         }
     },
-
 
     // 改变排序类型
     changeSortType: function (e) {

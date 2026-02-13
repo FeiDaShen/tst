@@ -423,6 +423,7 @@
 .post-user-info {
     flex: 1;
     overflow: hidden;
+    margin-left: 18rpx;
 }
 
 .post-nickname {

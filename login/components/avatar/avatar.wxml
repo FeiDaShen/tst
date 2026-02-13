@@ -1,0 +1,1 @@
+<view class="avatar {{_genderClass}}" style="{{_sizeStyle}}">{{_initial}}</view>

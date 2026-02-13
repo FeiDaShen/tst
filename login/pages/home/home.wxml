@@ -19,7 +19,7 @@
             <view class="post-content">
                 <!-- 帖子头部信息 -->
                 <view class="post-header">
-                    <image src="{{item.avatar || '/images/default-avatar.png'}}" class="post-avatar"></image>
+                    <avatar nickname="{{item.nickname}}" gender="{{item.gender || 'male'}}" size="50"></avatar>
                     <view class="post-user-info">
                         <text class="post-nickname">{{item.nickname}}</text>
                         <view class="post-meta">

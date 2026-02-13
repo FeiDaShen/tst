@@ -1,4 +1,6 @@
 <view class="login-container">
+    <!-- 示例：基于昵称和性别生成圆形头像 -->
+    <!-- <avatar nickname="{{nickname || demoUser.nickname}}" gender="{{(cachedUserInfo && cachedUserInfo.gender) || demoUser.gender}}" size="{{avatarSize}}"></avatar> -->
     <!-- 背景装饰 -->
     <view class="decoration-circle circle-1"></view>
     <view class="decoration-circle circle-2"></view>
@@ -56,7 +58,7 @@
             </view>
             <!-- 老用户欢迎信息 -->
             <view class="returning-user-info" wx:if="{{isReturningUser && cachedUserInfo}}">
-                <image src="/images/user-avatar.png" class="user-avatar"></image>
+                <avatar nickname="{{cachedUserInfo.nickname}}" gender="{{cachedUserInfo.gender || 'male'}}" size="{{avatarSize}}"></avatar>
                 <text class="user-greeting">你好，{{cachedUserInfo.nickname}}</text>
                 <text class="last-login">上次登录：{{formatLastLoginTime(cachedUserInfo.timestamp)}}</text>
             </view>

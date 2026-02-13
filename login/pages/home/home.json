@@ -1,4 +1,7 @@
 {
+    "usingComponents": {
+        "avatar": "/components/avatar/avatar"
+    },
     "navigationBarTitleText": "信息圈",
     "enablePullDownRefresh": true,
     "backgroundColor": "#f8f8f8",
