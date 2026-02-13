@@ -165,6 +165,17 @@ Page({
         };
         
         this.setData({ postData: mockData });
+        // 将本次浏览写入本地浏览记录
+        try {
+          const raw = wx.getStorageSync('viewHistory') || [];
+          const normId = (/^\d+$/.test(String(postId)) ? Number(postId) : String(postId));
+          const filtered = (raw || []).filter(item => String(item.id) !== String(normId));
+          filtered.unshift({ id: normId, title: mockData.content || '', viewTime: Date.now(), nickname: mockData.nickname || '' });
+          filtered.splice(50);
+          wx.setStorageSync('viewHistory', filtered);
+        } catch (err) {
+          console.warn('写入浏览记录失败', err);
+        }
         
         wx.hideLoading();
       } catch (error) {

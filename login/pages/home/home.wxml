@@ -14,12 +14,12 @@
     <!-- 帖子列表 - 使用scroll-view并优化加载 -->
     <scroll-view class="post-list" scroll-y="{{true}}" bindscrolltolower="loadMorePosts" enable-back-to-top="{{true}}" scroll-with-animation="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
         <!-- 帖子列表内容 -->
-        <view class="post-item" wx:for="{{postList}}" wx:key="id" bindtap="navigateToPostDetail" data-id="{{item.id}}">
+        <view class="post-item" wx:for="{{postList}}" wx:key="id" bindtap="navigateToPostDetail" data-id="{{item.id}}" data-title="{{item.content}}" data-nickname="{{item.nickname}}">
             <!-- 帖子内容 -->
             <view class="post-content">
                 <!-- 帖子头部信息 -->
                 <view class="post-header">
-                    <avatar nickname="{{item.nickname}}" gender="{{item.gender || 'male'}}" size="50"></avatar>
+                    <avatar nickname="{{item.nickname || ''}}" gender="{{item.gender || 'male'}}" size="50"></avatar>
                     <view class="post-user-info">
                         <text class="post-nickname">{{item.nickname}}</text>
                         <view class="post-meta">

@@ -199,7 +199,8 @@ Page({
             '学会了一道新菜：宫保鸡丁，味道还不错，下次可以尝试更复杂的菜式。',
             '跑步真的能让人快乐，每天5公里，坚持一个月，精神状态好了很多。',
             '分享一个摄影技巧：早晨和傍晚的光线最适合拍照，光线柔和，色彩丰富。',
-            '最近在学吉他，虽然手指很痛，但能弹出一首简单的曲子很有成就感。'
+            '最近在学吉他，虽然手指很痛，但能弹出一首简单的曲子很有成就感。',
+            '陌上人玉如,君子待花开。'
         ];
 
         for (let i = 0; i < this.data.pageSize; i++) {
@@ -338,6 +339,21 @@ Page({
     // 跳转到帖子详情页
     navigateToPostDetail(e) {
         const postId = e.currentTarget.dataset.id;
+        const title = e.currentTarget.dataset.title || '';
+        const nickname = e.currentTarget.dataset.nickname || '';
+        try {
+            const raw = wx.getStorageSync('viewHistory') || [];
+            const normId = (/^\d+$/.test(String(postId)) ? Number(postId) : String(postId));
+            // 去重: 使用字符串比较以兼容历史数据类型
+            const filtered = (raw || []).filter(item => String(item.id) !== String(normId));
+            filtered.unshift({ id: normId, title: title, viewTime: Date.now(), nickname: nickname });
+            // 保持最大长度 50
+            filtered.splice(50);
+            wx.setStorageSync('viewHistory', filtered);
+        } catch (err) {
+            console.warn('写入浏览记录失败', err);
+        }
+
         wx.navigateTo({
             url: `/pages/post-detail/post-detail?id=${postId}`
         });

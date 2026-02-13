@@ -1,2 +1,132 @@
-<!--pages/mine/mine.wxml-->
-<text>pages/mine/mine.wxml</text>
+<view class="mine-container">
+    <view class="profile-card">
+        <avatar nickname="{{userInfo.nickname || ''}}" gender="{{userInfo.gender || 'male'}}" size="64"></avatar>
+        <view class="profile-info">
+            <text class="nick">{{userInfo.nickname || '游客'}}</text>
+            <view class="stats">
+                <view class="stat">
+                    <text class="num">{{userInfo.postCount || 0}}</text>
+                    <text class="label">帖子</text>
+                </view>
+                <view class="stat">
+                    <text class="num">{{userInfo.followers || 0}}</text>
+                    <text class="label">粉丝</text>
+                </view>
+                <view class="stat">
+                    <text class="num">{{userInfo.following || 0}}</text>
+                    <text class="label">关注</text>
+                </view>
+            </view>
+        </view>
+    </view>
+
+    <!-- 选项卡按钮行 -->
+    <view class="tab-row">
+        <view class="tab-btn {{activeSection === 'history' ? 'active' : ''}}" data-section="history"
+            bindtap="openSection">浏览记录 {{history.length}}</view>
+        <view class="tab-btn {{activeSection === 'favorites' ? 'active' : ''}}" data-section="favorites"
+            bindtap="openSection">收藏</view>
+        <view class="tab-btn {{activeSection === 'posts' ? 'active' : ''}}" data-section="posts" bindtap="openSection">
+            我的帖子</view>
+    </view>
+
+    <!-- 展示区域 -->
+    <view class="display-area">
+        <!-- 浏览记录（默认） -->
+        <view wx:if="{{activeSection === 'history'}}">
+            <view wx:if="{{history.length === 0}}" class="card-empty">暂无浏览记录 </view>
+            <view wx:for="{{historyPreview}}" wx:key="id" class="list-item" bindtap="openPost" data-id="{{item.id}}"
+                data-title="{{item.title}}" data-nickname="{{item.nickname || item.author}}">
+                <text class="item-title">{{item.title}}</text>
+                <view class="meta-line"><text class="item-nick">{{item.nickname || item.author || '作者'}}</text><text
+                        class="item-time">{{item.viewTimeStr}}</text></view>
+            </view>
+            <view wx:if="{{history.length > 2}}" class="list-item more" data-section="history" bindtap="showMore">更多
+            </view>
+        </view>
+
+        <!-- 收藏 -->
+        <view wx:if="{{activeSection === 'favorites'}}">
+            <view wx:if="{{favorites.length === 0}}" class="card-empty">暂无收藏</view>
+            <view wx:for="{{favoritesPreview}}" wx:key="id" class="list-item" bindtap="openPost"
+                data-id="{{item.id}}" data-title="{{item.title}}" data-nickname="{{item.nickname || item.author}}">
+                <text class="item-title">{{item.title}}</text>
+                <view class="meta-line"><text class="item-nick">{{item.nickname || item.author || '作者'}}</text><text
+                        class="item-time">{{item.addedStr}}</text></view>
+            </view>
+            <view wx:if="{{favorites.length > 2}}" class="list-item more" data-section="favorites" bindtap="showMore">更多
+            </view>
+        </view>
+
+        <!-- 我的帖子 -->
+        <view wx:if="{{activeSection === 'posts'}}">
+            <view wx:if="{{posts.length === 0}}" class="card-empty">暂无帖子</view>
+            <view wx:for="{{postsPreview}}" wx:key="id" class="list-item" bindtap="openPost" data-id="{{item.id}}"
+                data-title="{{item.title}}" data-nickname="{{item.nickname || userInfo.nickname}}">
+                <text class="item-title">{{item.title}}</text>
+                <view class="meta-line"><text
+                        class="item-nick">{{item.nickname || userInfo.nickname || '作者'}}</text><text
+                        class="item-time">{{item.time}}</text></view>
+            </view>
+            <view wx:if="{{posts.length > 2}}" class="list-item more" data-section="posts" bindtap="showMore">更多</view>
+        </view>
+    </view>
+    <view class="actions-column">
+        <view wx:if="{{history.length > 0}}" class="cu-btn line sm clear" bindtap="clearHistory">清空浏览记录</view>
+        <view class="cu-btn bg-blue sm" bindtap="showFeedbackModal">反馈</view>
+    </view>
+
+    <!-- 历史弹窗 -->
+    <view class="modal-mask" wx:if="{{showHistory}}" bindtap="closeHistoryModal"></view>
+    <view class="list-modal" wx:if="{{showHistory}}" catchtouchmove>
+        <view class="list-modal-header">浏览记录（近7天）</view>
+        <scroll-view class="list-modal-body" scroll-y="true" style="height:{{listModalBodyHeight}}px">
+            <view wx:for="{{history}}" wx:key="id" class="list-row" bindtap="openPost" data-id="{{item.id}}"
+                data-title="{{item.title}}" data-nickname="{{item.nickname || item.author}}">
+                <text class="row-nick">{{item.nickname || item.author || '作者'}}</text>
+                <text class="row-time">{{item.viewTimeStr}}</text>
+                <text class="row-title">{{item.title}}</text>
+            </view>
+        </scroll-view>
+    </view>
+
+    <!-- 收藏弹窗 -->
+    <view class="modal-mask" wx:if="{{showFavorites}}" bindtap="closeFavoritesModal"></view>
+    <view class="list-modal" wx:if="{{showFavorites}}" catchtouchmove>
+        <view class="list-modal-header">收藏</view>
+        <scroll-view class="list-modal-body" scroll-y="true" style="height:{{listModalBodyHeight}}px">
+            <view wx:for="{{favorites}}" wx:key="id" class="list-row" bindtap="openPost" data-id="{{item.id}}"
+                data-title="{{item.title}}" data-nickname="{{item.nickname || item.author}}">
+                <text class="row-nick">{{item.nickname || item.author || '作者'}}</text>
+                <text class="row-time">{{item.addedStr}}</text>
+                <text class="row-title">{{item.title}}</text>
+            </view>
+        </scroll-view>
+    </view>
+
+    <!-- 我的帖子弹窗 -->
+    <view class="modal-mask" wx:if="{{showPosts}}" bindtap="closePostsModal"></view>
+    <view class="list-modal" wx:if="{{showPosts}}" catchtouchmove>
+        <view class="list-modal-header">我的帖子</view>
+        <scroll-view class="list-modal-body" scroll-y="true" style="height:{{listModalBodyHeight}}px">
+            <view wx:for="{{posts}}" wx:key="id" class="list-row" bindtap="openPost" data-id="{{item.id}}"
+                data-title="{{item.title}}" data-nickname="{{item.nickname || userInfo.nickname}}">
+                <text class="row-nick">{{item.nickname || userInfo.nickname || '作者'}}</text>
+                <text class="row-time">{{item.time}}</text>
+                <text class="row-title">{{item.title}}</text>
+            </view>
+        </scroll-view>
+    </view>
+
+    <!-- 反馈弹窗（简易） -->
+    <view class="modal-mask" wx:if="{{showFeedback}}"></view>
+    <view class="feedback-modal" wx:if="{{showFeedback}}">
+        <view class="feedback-header">反馈</view>
+        <textarea class="feedback-input" placeholder="请输入您的反馈（建议描述清晰）" value="{{feedbackText}}"
+            bindinput="onFeedbackInput"></textarea>
+        <view class="feedback-actions">
+            <view bindtap="closeFeedbackModal" class="cu-btn line sm">取消</view>
+            <view bindtap="submitFeedback" class="cu-btn bg-blue sm">提交</view>
+        </view>
+    </view>
+</view>

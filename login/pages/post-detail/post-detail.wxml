@@ -28,7 +28,7 @@
         <!-- 帖子作者信息 -->
         <view class="author-section">
             <view class="author-info">
-                <avatar nickname="{{postData.nickname}}" gender="{{postData.gender || 'male'}}" size="64" bindtap="previewAvatar"></avatar>
+                <avatar nickname="{{postData.nickname || ''}}" gender="{{postData.gender || 'male'}}" size="64" bindtap="previewAvatar"></avatar>
                 <view class="author-details">
                     <text class="author-nickname">{{postData.nickname}}</text>
                     <view class="author-meta">
@@ -149,7 +149,7 @@
             <!-- 评论列表 -->
             <view class="comments-list">
                 <view class="comment-item" wx:for="{{commentList}}" wx:key="id" bindtap="replyComment" data-id="{{item.id}}" data-nickname="{{item.nickname}}">
-                    <avatar nickname="{{item.nickname}}" gender="{{item.gender || 'male'}}" size="40"></avatar>
+                    <avatar nickname="{{item.nickname || ''}}" gender="{{item.gender || 'male'}}" size="40"></avatar>
 
                     <view class="comment-content">
                         <view class="comment-header">

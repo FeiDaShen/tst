@@ -58,7 +58,7 @@
             </view>
             <!-- 老用户欢迎信息 -->
             <view class="returning-user-info" wx:if="{{isReturningUser && cachedUserInfo}}">
-                <avatar nickname="{{cachedUserInfo.nickname}}" gender="{{cachedUserInfo.gender || 'male'}}" size="{{avatarSize}}"></avatar>
+                <avatar nickname="{{cachedUserInfo.nickname || ''}}" gender="{{cachedUserInfo.gender || 'male'}}" size="{{avatarSize}}"></avatar>
                 <text class="user-greeting">你好，{{cachedUserInfo.nickname}}</text>
                 <text class="last-login">上次登录：{{formatLastLoginTime(cachedUserInfo.timestamp)}}</text>
             </view>
