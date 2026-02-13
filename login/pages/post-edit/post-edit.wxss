@@ -1,0 +1,25 @@
+/* 引入 ColorUI 样式 */
+@import "/colorui/main.wxss";
+@import "/colorui/icon.wxss";
+
+/* 自定义样式 */
+.cu-form-group .title {
+  min-width: calc(4em + 15px);
+}
+
+.switch {
+  transform: scale(0.8);
+}
+
+.grid-square {
+  height: 180rpx;
+}
+
+.textarea {
+  min-height: 200rpx;
+}
+
+/* 按钮禁用样式 */
+button[disabled] {
+  opacity: 0.6;
+}

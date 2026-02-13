@@ -1,0 +1,7 @@
+{
+    "usingComponents": {},
+    "navigationBarTitleText": "发布帖子",
+    "navigationBarBackgroundColor": "#0081ff",
+    "navigationBarTextStyle": "white",
+    "enablePullDownRefresh": false
+  }

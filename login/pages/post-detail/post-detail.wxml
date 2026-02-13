@@ -1,0 +1,284 @@
+<!-- pages/post-detail/post-detail.wxml -->
+<view class="post-detail-container">
+    <!-- iOS风格侧滑返回指示器 -->
+    <view class="swipe-indicator" wx:if="{{showSwipeIndicator}}">
+        <view class="swipe-line"></view>
+    </view>
+
+    <!-- 头部信息栏 -->
+    <view class="header">
+        <!-- 改进的返回按钮 -->
+        <view class="header">
+            <!-- 移除原来的返回按钮 -->
+            <view class="header-title-container">
+                <text class="header-title">帖子详情</text>
+            </view>
+            <view class="more-btn" bindtap="showMoreOptions">
+                <text class="cuIcon-more"></text>
+            </view>
+        </view>
+    </view>
+
+    <view class="floating-back-btn {{scrollTop > 100 ? 'show' : ''}}" bindtap="goBack">
+        <text class="cuIcon-back"></text>
+    </view>
+
+    <!-- 主要内容区域 -->
+    <scroll-view class="content-scroll" scroll-y="{{true}}" enable-back-to-top="{{true}}" scroll-with-animation="{{true}}" bindscroll="onPageScroll">
+        <!-- 帖子作者信息 -->
+        <view class="author-section">
+            <view class="author-info">
+                <image class="author-avatar" src="{{postData.avatar || '/images/default-avatar.png'}}" bindtap="previewAvatar"></image>
+                <view class="author-details">
+                    <text class="author-nickname">{{postData.nickname}}</text>
+                    <view class="author-meta">
+                        <text class="cuIcon-location"></text>
+                        <text class="location-text">{{postData.location}}</text>
+                        <text class="post-time">{{postData.createTime}}</text>
+                    </view>
+                </view>
+                <button class="follow-btn {{postData.isFollowing ? 'following' : ''}}" bindtap="toggleFollow">
+                    {{postData.isFollowing ? '已关注' : '+ 关注'}}
+                </button>
+            </view>
+        </view>
+
+        <!-- 天气信息卡片 -->
+        <view class="weather-card" wx:if="{{postData.weather}}">
+            <view class="weather-header">
+                <text class="cuIcon-info"></text>
+                <text class="weather-title">天气信息</text>
+            </view>
+            <view class="weather-content">
+                <view class="weather-item">
+                    <text class="cuIcon-cloud"></text>
+                    <view class="weather-item-content">
+                        <text class="weather-label">天气：</text>
+                        <text class="weather-value">{{postData.weather.condition}}</text>
+                    </view>
+                </view>
+                <view class="weather-item">
+                    <text class="cuIcon-wind"></text>
+                    <view class="weather-item-content">
+                        <text class="weather-label">风向：</text>
+                        <text class="weather-value">{{postData.weather.windDirection}} {{postData.weather.windScale}}级</text>
+                    </view>
+                </view>
+                <view class="weather-item">
+                    <text class="cuIcon-temperature"></text>
+                    <view class="weather-item-content">
+                        <text class="weather-label">温度：</text>
+                        <text class="weather-value">{{postData.weather.temp}}°C</text>
+                    </view>
+                </view>
+                <view class="weather-item" wx:if="{{postData.weather.humidity}}">
+                    <text class="cuIcon-humidity"></text>
+                    <view class="weather-item-content">
+                        <text class="weather-label">湿度：</text>
+                        <text class="weather-value">{{postData.weather.humidity}}%</text>
+                    </view>
+                </view>
+            </view>
+        </view>
+
+        <!-- 帖子内容 -->
+        <view class="post-content-section">
+            <view class="post-text">{{postData.content}}</view>
+
+            <!-- 图片展示 -->
+            <view class="post-images" wx:if="{{postData.images && postData.images.length > 0}}">
+                <swiper class="post-images-swiper" indicator-dots="{{true}}" indicator-color="rgba(255,255,255,0.6)" indicator-active-color="#ffffff" autoplay="{{false}}" interval="3000" duration="500" circular="{{true}}">
+                    <swiper-item wx:for="{{postData.images}}" wx:key="index">
+                        <image src="{{item}}" mode="aspectFit" bindtap="previewImage" data-url="{{item}}" data-index="{{index}}" class="post-image"></image>
+                    </swiper-item>
+                </swiper>
+            </view>
+
+            <!-- 帖子元信息 -->
+            <view class="post-meta">
+                <text class="post-meta-item">
+                    <text class="cuIcon-time"></text>
+                    {{postData.createTime}}
+                </text>
+                <text class="post-meta-item">
+                    <text class="cuIcon-eye"></text>
+                    {{postData.viewCount || 0}} 浏览
+                </text>
+            </view>
+        </view>
+
+        <!-- 互动功能区 -->
+        <view class="interaction-section">
+            <view class="interaction-buttons">
+                <!-- 点赞 -->
+                <view class="interaction-btn {{postData.isLiked ? 'liked' : ''}}" bindtap="toggleLike">
+                    <text class="cuIcon-like {{postData.isLiked ? 'text-red' : ''}}"></text>
+                    <text class="btn-text">{{postData.likeCount || 0}}</text>
+                </view>
+
+                <!-- 收藏 -->
+                <view class="interaction-btn {{postData.isFavorited ? 'favorited' : ''}}" bindtap="toggleFavorite">
+                    <text class="cuIcon-favor {{postData.isFavorited ? 'text-yellow' : ''}}"></text>
+                    <text class="btn-text">{{postData.favoriteCount || 0}}</text>
+                </view>
+
+                <!-- 分享 -->
+                <view class="interaction-btn" bindtap="sharePost">
+                    <text class="cuIcon-share"></text>
+                    <text class="btn-text">分享</text>
+                </view>
+
+                <!-- 打赏 -->
+                <view class="interaction-btn" bindtap="showRewardModal">
+                    <text class="cuIcon-moneybag"></text>
+                    <text class="btn-text">打赏</text>
+                </view>
+            </view>
+        </view>
+
+        <!-- 评论区域 -->
+        <view class="comments-section">
+            <view class="comments-header">
+                <text class="comments-title">评论 ({{commentList.length}})</text>
+                <view class="sort-comments" bindtap="toggleCommentSort">
+                    <text>{{commentSort === 'new' ? '最新' : '热门'}}</text>
+                    <text class="cuIcon-unfold"></text>
+                </view>
+            </view>
+
+            <!-- 评论列表 -->
+            <view class="comments-list">
+                <view class="comment-item" wx:for="{{commentList}}" wx:key="id" bindtap="replyComment" data-id="{{item.id}}" data-nickname="{{item.nickname}}">
+                    <image class="comment-avatar" src="{{item.avatar || '/images/default-avatar.png'}}"></image>
+
+                    <view class="comment-content">
+                        <view class="comment-header">
+                            <text class="comment-nickname">{{item.nickname}}</text>
+                            <text class="comment-time">{{item.createTime}}</text>
+                        </view>
+
+                        <!-- 回复的用户 -->
+                        <view class="reply-to" wx:if="{{item.replyTo}}">
+                            <text class="reply-text">@{{item.replyTo.nickname}}</text>
+                        </view>
+
+                        <text class="comment-text">{{item.content}}</text>
+
+                        <view class="comment-footer">
+                            <view class="comment-actions">
+                                <view class="comment-like {{item.isLiked ? 'liked' : ''}}" catchtap="toggleCommentLike" data-index="{{index}}" data-id="{{item.id}}">
+                                    <text class="cuIcon-likefill {{item.isLiked ? 'text-red' : ''}}"></text>
+                                    <text class="like-count">{{item.likeCount || 0}}</text>
+                                </view>
+
+                                <view class="comment-reply" catchtap="replyComment" data-id="{{item.id}}" data-nickname="{{item.nickname}}">
+                                    <text class="cuIcon-message"></text>
+                                    <text>回复</text>
+                                </view>
+                            </view>
+                        </view>
+
+                        <!-- 子评论 -->
+                        <view class="sub-comments" wx:if="{{item.subComments && item.subComments.length > 0}}">
+                            <view class="sub-comment-item" wx:for="{{item.subComments}}" wx:key="id" catchtap="replyComment" data-id="{{item.id}}" data-nickname="{{item.nickname}}">
+                                <view class="sub-comment-content">
+                                    <text class="sub-nickname">{{item.nickname}}</text>
+                                    <text wx:if="{{item.replyTo}}"> 回复 </text>
+                                    <text class="reply-nickname" wx:if="{{item.replyTo}}">{{item.replyTo.nickname}}</text>
+                                    <text>：{{item.content}}</text>
+                                </view>
+                                <view class="sub-comment-actions">
+                                    <text class="sub-comment-time">{{item.createTime}}</text>
+                                    <view class="sub-comment-like" catchtap="toggleSubCommentLike" data-parentIndex="{{index}}" data-subIndex="{{subIndex}}">
+                                        <text class="cuIcon-likefill {{item.isLiked ? 'text-red' : ''}}"></text>
+                                        <text>{{item.likeCount || 0}}</text>
+                                    </view>
+                                </view>
+                            </view>
+
+                            <!-- 查看更多子评论 -->
+                            <view class="view-more-subcomments" wx:if="{{item.subComments && item.subComments.length < item.totalSubComments}}" bindtap="loadMoreSubComments" data-index="{{index}}">
+                                <text>查看更多回复({{item.totalSubComments - item.subComments.length}}条)</text>
+                                <text class="cuIcon-unfold"></text>
+                            </view>
+                        </view>
+                    </view>
+                </view>
+
+                <!-- 加载更多评论 -->
+                <view class="load-more-comments" wx:if="{{hasMoreComments}}">
+                    <view class="load-more-btn" bindtap="loadMoreComments">
+                        <text>加载更多评论</text>
+                        <text class="cuIcon-refresh"></text>
+                    </view>
+                </view>
+
+                <!-- 暂无评论 -->
+                <view class="no-comments" wx:if="{{commentList.length === 0}}">
+                    <image src="/images/no-comment.png" class="no-comments-icon"></image>
+                    <text class="no-comments-text">还没有评论，快来抢沙发吧~</text>
+                </view>
+            </view>
+        </view>
+    </scroll-view>
+
+    <!-- 右下角悬浮返回按钮 -->
+    <view class="floating-back-btn {{scrollTop > 100 ? 'show' : ''}}" bindtap="goBack" hover-class="hover-effect">
+        <view class="floating-back-btn-inner">
+            <text class="cuIcon-back"></text>
+        </view>
+    </view>
+
+    <!-- 底部评论输入框 -->
+    <view class="comment-input-container {{isInputFocus ? 'input-active' : ''}}">
+        <view class="comment-input-wrapper">
+            <!-- 回复提示 -->
+            <view class="reply-hint" wx:if="{{replyingTo}}">
+                <text>回复 @{{replyingTo.nickname}}</text>
+                <text class="cancel-reply" bindtap="cancelReply">×</text>
+            </view>
+
+            <!-- 输入框 -->
+            <textarea class="comment-textarea" placeholder="{{replyingTo ? '回复 ' + replyingTo.nickname : '说点什么吧...'}}" value="{{commentContent}}" bindinput="onCommentInput" bindfocus="onInputFocus" bindblur="onInputBlur" maxlength="500" auto-height="{{true}}" cursor-spacing="20" show-confirm-bar="{{false}}"></textarea>
+
+            <!-- 提交按钮 -->
+            <button class="comment-submit-btn {{commentContent.trim() ? 'active' : ''}}" bindtap="submitComment" disabled="{{!commentContent.trim()}}">
+                发送
+            </button>
+        </view>
+    </view>
+
+    <!-- 更多操作菜单 -->
+    <view class="action-sheet" wx:if="{{showActionSheet}}">
+        <view class="action-sheet-mask" bindtap="hideActionSheet"></view>
+        <view class="action-sheet-content">
+            <view class="action-sheet-list">
+                <view class="action-item" bindtap="reportPost">
+                    <text class="cuIcon-warn"></text>
+                    <text>举报</text>
+                </view>
+                <view class="action-item" wx:if="{{postData.isOwner}}" bindtap="editPost">
+                    <text class="cuIcon-edit"></text>
+                    <text>编辑</text>
+                </view>
+                <view class="action-item" wx:if="{{postData.isOwner}}" bindtap="deletePost">
+                    <text class="cuIcon-delete"></text>
+                    <text>删除</text>
+                </view>
+                <view class="action-item" bindtap="copyLink">
+                    <text class="cuIcon-link"></text>
+                    <text>复制链接</text>
+                </view>
+                <view class="action-item" bindtap="hideActionSheet">
+                    <text class="cuIcon-close"></text>
+                    <text>取消</text>
+                </view>
+            </view>
+        </view>
+    </view>
+
+    <!-- 打赏弹窗（复用首页的弹窗） -->
+    <view class="reward-modal" wx:if="{{showRewardModal}}">
+        <!-- 复用首页的打赏弹窗代码 -->
+    </view>
+</view>

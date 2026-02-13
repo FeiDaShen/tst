@@ -1,0 +1,638 @@
+/* 页面容器 */
+.login-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 40rpx 30rpx;
+    position: relative;
+    overflow-x: hidden;
+  }
+  
+  /* 背景装饰圆圈 */
+  .decoration-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    z-index: 0;
+  }
+  
+  .circle-1 {
+    width: 300rpx;
+    height: 300rpx;
+    top: -100rpx;
+    right: -100rpx;
+  }
+  
+  .circle-2 {
+    width: 200rpx;
+    height: 200rpx;
+    bottom: 100rpx;
+    left: -80rpx;
+  }
+  
+  /* 主内容区域 */
+  .main-content {
+    position: relative;
+    z-index: 1;
+    background-color: white;
+    border-radius: 24rpx;
+    padding: 50rpx 40rpx;
+    box-shadow: 0 10rpx 40rpx rgba(0, 0, 0, 0.08);
+  }
+  
+  /* 欢迎区域 */
+  .welcome-section {
+    text-align: center;
+    margin-bottom: 60rpx;
+  }
+  
+  .welcome-title {
+    display: block;
+    font-size: 36rpx;
+    color: #666;
+    margin-bottom: 10rpx;
+  }
+  
+  .app-name {
+    display: block;
+    font-size: 56rpx;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 16rpx;
+  }
+  
+  .welcome-subtitle {
+    display: block;
+    font-size: 28rpx;
+    color: #999;
+  }
+  
+  /* 进度指示器 */
+  .progress-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 50rpx;
+  }
+  
+  .progress-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+  
+  .progress-dot {
+    width: 60rpx;
+    height: 60rpx;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28rpx;
+    font-weight: bold;
+    margin-bottom: 12rpx;
+  }
+  
+  .progress-item.completed .progress-dot {
+    background-color: #07c160;
+    color: white;
+  }
+  
+  .progress-item.pending .progress-dot {
+    background-color: #f0f0f0;
+    color: #999;
+  }
+  
+  .progress-text {
+    font-size: 24rpx;
+    color: #666;
+  }
+  
+  .progress-line {
+    width: 100rpx;
+    height: 4rpx;
+    margin: 0 10rpx;
+    background-color: #f0f0f0;
+  }
+  
+  .progress-line.completed {
+    background-color: #07c160;
+  }
+  
+  /* 状态摘要 */
+  .status-summary {
+    background-color: #f8f9fa;
+    border-radius: 16rpx;
+    padding: 30rpx;
+    margin-bottom: 40rpx;
+  }
+  
+  .status-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20rpx;
+  }
+  
+  .status-item:last-child {
+    margin-bottom: 0;
+  }
+  
+  .status-item.success {
+    color: #07c160;
+  }
+  
+  .status-icon {
+    width: 32rpx;
+    height: 32rpx;
+    margin-right: 15rpx;
+  }
+  
+  .status-text {
+    font-size: 28rpx;
+  }
+  
+  /* 提交按钮 */
+  .submit-btn {
+    background: linear-gradient(to right, #1989fa, #0077e6);
+    color: white;
+    border-radius: 50rpx;
+    font-size: 32rpx;
+    height: 96rpx;
+    line-height: 96rpx;
+    margin: 30rpx 0;
+  }
+  
+  .submit-btn[disabled] {
+    background: linear-gradient(to right, #c8c9cc, #a5a7ab);
+    color: white;
+  }
+  
+  /* 用户协议区域 */
+  .agreement-section {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    font-size: 24rpx;
+    color: #999;
+    margin-top: 30rpx;
+  }
+  
+  .agreement-label {
+    display: flex;
+    align-items: center;
+    margin-right: 10rpx;
+  }
+  
+  .agreement-text {
+    margin-left: 10rpx;
+  }
+  
+  .agreement-link {
+    color: #1989fa;
+    margin-left: 5rpx;
+  }
+  
+  /* 设置向导弹窗 */
+  .setup-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .setup-modal .modal-mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  
+  .setup-content {
+    position: relative;
+    width: 90%;
+    max-width: 600rpx;
+    background-color: white;
+    border-radius: 20rpx;
+    overflow: hidden;
+    z-index: 1001;
+  }
+  
+  .setup-content .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40rpx 40rpx 30rpx;
+    border-bottom: 2rpx solid #f5f5f5;
+  }
+  
+  .setup-content .modal-title {
+    font-size: 36rpx;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .setup-content .modal-close {
+    font-size: 50rpx;
+    color: #999;
+    line-height: 1;
+    padding: 0 10rpx;
+  }
+  
+  .setup-body {
+    padding: 0 40rpx 40rpx;
+  }
+  
+  /* 步骤指示器 */
+  .steps-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 40rpx;
+    padding-top: 30rpx;
+  }
+  
+  .step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+  
+  .step-number {
+    width: 50rpx;
+    height: 50rpx;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24rpx;
+    font-weight: bold;
+    margin-bottom: 12rpx;
+    background-color: #f0f0f0;
+    color: #999;
+    border: 4rpx solid #f0f0f0;
+  }
+  
+  .step-item.active .step-number {
+    background-color: white;
+    color: #1989fa;
+    border-color: #1989fa;
+  }
+  
+  .step-item.completed .step-number {
+    background-color: #07c160;
+    color: white;
+    border-color: #07c160;
+  }
+  
+  .step-text {
+    font-size: 24rpx;
+    color: #666;
+  }
+  
+  .step-line {
+    width: 80rpx;
+    height: 4rpx;
+    background-color: #f0f0f0;
+    margin: 0 10rpx 30rpx;
+  }
+  
+  .step-line.completed {
+    background-color: #07c160;
+  }
+  
+  /* 步骤内容 */
+  .setup-swiper {
+    height: 500rpx;
+  }
+
+  .swiper-container {
+    height: calc(100vh - 120rpx); /* 根据实际布局调整 */
+  }
+  
+  /* 滚动区域高度占满Swiper */
+  .scroll-content {
+    height: 100%;
+  }
+  
+  .step-content {
+    display: flex;
+    flex-direction: column;
+    padding: 20rpx 0;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .step-icon {
+    width: 120rpx;
+    height: 120rpx;
+    margin-bottom: 20rpx;
+  }
+  
+  .step-title {
+    font-size: 36rpx;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20rpx;
+  }
+  
+  .step-desc {
+    font-size: 28rpx;
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 40rpx;
+  }
+  
+  /* 位置授权状态 */
+  .auth-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30rpx;
+    background-color: #f7f7f7;
+    border-radius: 16rpx;
+    color: #07c160;
+    font-size: 28rpx;
+    margin-bottom: 30rpx;
+  }
+  
+  /* 昵称输入区域 */
+  .nickname-input-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 30rpx;
+    min-height: 88rpx; /* 确保最小高度 */
+  }
+  
+  .nickname-input {
+    flex: 1;
+    border: 2rpx solid #e6e6e6;
+    border-radius: 16rpx;
+    padding: 28rpx 30rpx;
+    font-size: 30rpx;
+    color: #333;
+    height: 88rpx; /* 固定高度 */
+    margin-right: 20rpx;
+    line-height: 30rpx; /* 设置行高，确保文本垂直居中 */
+    overflow: visible; /* 确保内容可以显示 */
+    white-space: nowrap; /* 禁止换行 */
+  }
+  
+  .random-btn {
+    display: flex;
+    align-items: center;
+    padding: 20rpx 30rpx;
+    background-color: #f0f9ff;
+    border-radius: 16rpx;
+    color: #1989fa;
+    font-size: 28rpx;
+  }
+  
+  .refresh-icon {
+    width: 32rpx;
+    height: 32rpx;
+    margin-left: 10rpx;
+  }
+  
+  /* 随机昵称推荐 */
+  .random-nicknames {
+    width: 100%;
+    margin-bottom: 30rpx;
+  }
+  
+  .recommend-title {
+    font-size: 28rpx;
+    color: #666;
+    display: block;
+    margin-bottom: 20rpx;
+    text-align: left;
+  }
+  
+  .nickname-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20rpx;
+  }
+  
+  .nickname-tag {
+    padding: 18rpx 30rpx;
+    background-color: #f0f9ff;
+    border-radius: 50rpx;
+    color: #1989fa;
+    font-size: 22rpx;
+    border: 2rpx solid transparent;
+  }
+  
+  .nickname-tag:active {
+    background-color: #e0f0ff;
+    border-color: #1989fa;
+  }
+  
+  /* 步骤提示 */
+  .step-tips {
+    font-size: 24rpx;
+    color: #999;
+    margin-bottom: 20rpx;
+  }
+  
+  /* 步骤按钮 */
+  .step-btn {
+    background: linear-gradient(to right, #07c160, #05a455);
+    color: white;
+    border-radius: 50rpx;
+    font-size: 30rpx;
+    height: 88rpx;
+    line-height: 88rpx;
+    width: 100%;
+    margin-bottom: 30rpx;
+  }
+  
+  .step-btn::after {
+    border: none;
+  }
+  
+  /* 导航按钮 */
+  .step-navigation {
+    display: flex;
+    justify-content: center;
+    margin-top: 30rpx;
+  }
+  
+  .nav-btn {
+    padding: 24rpx 60rpx;
+    border-radius: 50rpx;
+    font-size: 30rpx;
+    border: none;
+    margin: 0 15rpx;
+  }
+  
+  .nav-btn.prev {
+    background-color: #f0f0f0;
+    color: #666;
+  }
+  
+  .nav-btn.next, .nav-btn.complete {
+    background: linear-gradient(to right, #1989fa, #0077e6);
+    color: white;
+  }
+  
+  .nav-btn.next[disabled], .nav-btn.complete[disabled] {
+    background: linear-gradient(to right, #c8c9cc, #a5a7ab);
+    color: white;
+  }
+  
+  .nav-btn::after {
+    border: none;
+  }
+  
+  /* 用户协议弹窗 */
+  .agreement-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1002;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .agreement-modal .modal-mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  
+  .agreement-content {
+    position: relative;
+    width: 85%;
+    height: 70vh;
+    background-color: white;
+    border-radius: 20rpx;
+    overflow: hidden;
+    z-index: 1003;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .agreement-content .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40rpx 40rpx 20rpx;
+    border-bottom: 2rpx solid #f5f5f5;
+  }
+  
+  .agreement-content .modal-title {
+    font-size: 36rpx;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .agreement-content .modal-close {
+    font-size: 50rpx;
+    color: #999;
+    line-height: 1;
+    padding: 0 10rpx;
+  }
+  
+  .agreement-body {
+    flex: 1;
+    padding: 0;
+  }
+  
+  .agreement-scroll {
+    height: 100%;
+    padding: 40rpx;
+  }
+  
+  .agreement-text-content {
+    font-size: 28rpx;
+    color: #333;
+    line-height: 1.6;
+  }
+  
+  .agreement-content .modal-footer {
+    display: flex;
+    border-top: 2rpx solid #f5f5f5;
+  }
+  
+  .agreement-content .modal-btn {
+    flex: 1;
+    border-radius: 0;
+    border: none;
+    font-size: 32rpx;
+    height: 100rpx;
+    line-height: 100rpx;
+    background-color: transparent;
+  }
+  
+  .agreement-content .modal-btn::after {
+    border: none;
+  }
+  
+  .agreement-content .modal-btn.confirm {
+    color: #1989fa;
+  }
+
+  /* 老用户欢迎信息 */
+.returning-user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 40rpx;
+    padding: 30rpx;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e6f7ff 100%);
+    border-radius: 16rpx;
+    border: 2rpx solid #d9ecff;
+  }
+  
+  .user-avatar {
+    width: 120rpx;
+    height: 120rpx;
+    border-radius: 50%;
+    margin-bottom: 20rpx;
+    border: 4rpx solid white;
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  }
+  
+  .user-greeting {
+    font-size: 36rpx;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10rpx;
+  }
+  
+  .last-login {
+    font-size: 24rpx;
+    color: #666;
+  }
+  
+  /* 调试区域 */
+  .debug-section {
+    margin-top: 40rpx;
+    text-align: center;
+  }
+  
+  .debug-btn {
+    background-color: #f0f0f0;
+    color: #999;
+    font-size: 24rpx;
+    padding: 10rpx 20rpx;
+    border-radius: 8rpx;
+  }
+  
+  /* 其他样式保持不变... */

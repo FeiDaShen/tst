@@ -1,0 +1,210 @@
+<view class="login-container">
+    <!-- 背景装饰 -->
+    <view class="decoration-circle circle-1"></view>
+    <view class="decoration-circle circle-2"></view>
+
+    <!-- 主内容区域 -->
+    <view class="main-content">
+        <!-- 欢迎标题 -->
+        <view class="welcome-section">
+            <text class="welcome-title">{{isReturningUser ? '欢迎回来' : '欢迎使用'}}</text>
+            <text class="app-name">{{appName}}</text>
+            <text class="welcome-subtitle">{{isReturningUser ? '点击下方按钮开始使用' : '请先完成基本设置'}}</text>
+        </view>
+
+        <!-- 进度指示器 -->
+        <view class="progress-section">
+            <view class="progress-item {{setupProgress.location ? 'completed' : 'pending'}}">
+                <view class="progress-dot">
+                    <text wx:if="{{setupProgress.location}}">✓</text>
+                </view>
+                <text class="progress-text">位置授权</text>
+            </view>
+            <view class="progress-line {{setupProgress.location ? 'completed' : ''}}"></view>
+            <view class="progress-item {{setupProgress.nickname ? 'completed' : 'pending'}}">
+                <view class="progress-dot">
+                    <text wx:if="{{setupProgress.nickname}}">✓</text>
+                </view>
+                <text class="progress-text">昵称设置</text>
+            </view>
+            <view class="progress-line {{setupProgress.nickname ? 'completed' : ''}}"></view>
+            <view class="progress-item {{setupProgress.agreement ? 'completed' : 'pending'}}">
+                <view class="progress-dot">
+                    <text wx:if="{{setupProgress.agreement}}">✓</text>
+                </view>
+                <text class="progress-text">隐私协议</text>
+            </view>
+        </view>
+
+        <!-- 设置状态显示 -->
+        <view class="status-summary">
+            <view class="status-item" wx:if="{{!setupProgress.location && !isReturningUser}}">
+                <image src="/images/warning-icon.png" class="status-icon"></image>
+                <text class="status-text">需要完成位置授权</text>
+            </view>
+            <view class="status-item" wx:if="{{!setupProgress.nickname && !isReturningUser}}">
+                <image src="/images/warning-icon.png" class="status-icon"></image>
+                <text class="status-text">需要设置昵称</text>
+            </view>
+            <view class="status-item" wx:if="{{!setupProgress.agreement}}">
+                <image src="/images/warning-icon.png" class="status-icon"></image>
+                <text class="status-text">需要同意隐私协议</text>
+            </view>
+            <view class="status-item success" wx:if="{{setupProgress.location && setupProgress.nickname && setupProgress.agreement}}">
+                <image src="/images/success-icon.png" class="status-icon"></image>
+                <text class="status-text">{{isReturningUser ? '已登录，点击下方按钮开始使用' : '所有设置已完成，可以开始使用了'}}</text>
+            </view>
+            <!-- 老用户欢迎信息 -->
+            <view class="returning-user-info" wx:if="{{isReturningUser && cachedUserInfo}}">
+                <image src="/images/user-avatar.png" class="user-avatar"></image>
+                <text class="user-greeting">你好，{{cachedUserInfo.nickname}}</text>
+                <text class="last-login">上次登录：{{formatLastLoginTime(cachedUserInfo.timestamp)}}</text>
+            </view>
+        </view>
+
+        <!-- 开始使用按钮 -->
+        <button class="submit-btn" bindtap="handleSubmit" disabled="{{!canSubmit}}">
+            {{isReturningUser ? '开始使用' : '完成设置并开始使用'}}
+        </button>
+
+        <!-- 用户协议提示 -->
+        <!-- 用户协议提示 -->
+        <view class="agreement-section">
+            <checkbox-group bindchange="handleAgreementChange">
+                <label class="agreement-label">
+                    <checkbox value="agree" checked="{{agreementChecked}}" color="#07c160" />
+                    <text class="agreement-text">我已阅读并同意</text>
+                </label>
+            </checkbox-group>
+            <text class="agreement-link" bindtap="showUserAgreement">《用户协议》</text>
+            <text class="agreement-link" bindtap="showPrivacyPolicy">《隐私政策》</text>
+        </view>
+        <!-- 清除缓存按钮（调试用，正式环境可移除） -->
+        <view class="debug-section" wx:if="{{false}}">
+            <button class="debug-btn" bindtap="clearCache">清除缓存</button>
+        </view>
+    </view>
+
+    <!-- 设置向导弹窗 -->
+    <view class="setup-modal" wx:if="{{showSetupModal}}">
+        <view class="modal-mask"></view>
+        <view class="modal-content setup-content">
+            <view class="modal-header">
+                <text class="modal-title">完成设置向导</text>
+                <!-- 根据设置完成情况显示关闭按钮 -->
+                <text class="modal-close" wx:if="{{setupProgress.location && setupProgress.nickname}}" bindtap="closeSetupModal">×</text>
+            </view>
+
+            <view class="modal-body setup-body">
+                <!-- 步骤指示器 -->
+                <view class="steps-indicator">
+                    <view class="step-item {{currentStep === 1 ? 'active' : ''}} {{setupProgress.location ? 'completed' : ''}}">
+                        <view class="step-number">1</view>
+                        <text class="step-text">位置授权</text>
+                    </view>
+                    <view class="step-line {{setupProgress.location ? 'completed' : ''}}"></view>
+                    <view class="step-item {{currentStep === 2 ? 'active' : ''}} {{setupProgress.nickname ? 'completed' : ''}}">
+                        <view class="step-number">2</view>
+                        <text class="step-text">昵称设置</text>
+                    </view>
+                </view>
+
+                <!-- 步骤内容 -->
+                <swiper class="setup-swiper" current="{{currentStep - 1}}" bindchange="onSwiperChange" circular="{{false}}" disable-touch="{{true}}">
+                    <!-- 第一步：位置授权 -->
+                    <swiper-item>
+                        <view class="step-content">
+                            <!-- <image src="/images/location-large.png" class="step-icon"></image> -->
+                            <text class="step-title">位置授权</text>
+                            <text class="step-desc">
+                                我们需要获取您的地理位置信息，以便为您提供更精准的服务
+                            </text>
+
+                            <view class="auth-status" wx:if="{{setupProgress.location}}">
+                                <image src="/images/success-icon.png" class="status-icon"></image>
+                                <text class="status-text">位置信息已授权</text>
+                            </view>
+
+                            <button class="step-btn" wx:if="{{!setupProgress.location}}" bindtap="handleLocationAuth" type="primary">
+                                授权地理位置
+                            </button>
+
+                            <view class="step-tips">
+                                <text>提示：授权后，您可以随时在设置中修改权限</text>
+                            </view>
+                        </view>
+                    </swiper-item>
+
+                    <!-- 第二步：昵称设置 -->
+
+                    <swiper-item>
+                        <scroll-view scroll-y="true" class="scroll-content">
+                            <view class="step-content">
+                                <!-- <image src="/images/nickname-icon.png" class="step-icon"></image> -->
+                                <text class="step-title">设置您的昵称</text>
+                                <text class="step-desc">
+                                    这将作为您在社区的展示名称，可随时修改
+                                </text>
+
+
+                                <view class="nickname-input-wrapper">
+                                    <input class="nickname-input" placeholder="请输入昵称" maxlength="12" value="{{nickname}}" bindinput="handleNicknameInput" />
+                                    <view class="random-btn" bindtap="getRandomNickname" wx:if="{{randomNicknames.length > 0}}">
+                                        随机
+                                        <image src="/images/refresh-icon.png" class="refresh-icon"></image>
+                                    </view>
+                                </view>
+
+                                <!-- 随机昵称推荐 -->
+                                <view class="random-nicknames" wx:if="{{randomNicknames.length > 0}}">
+                                    <text class="recommend-title">推荐昵称：</text>
+                                    <view class="nickname-tags">
+                                        <view class="nickname-tag" wx:for="{{randomNicknames}}" wx:key="index" data-nickname="{{item}}" bindtap="selectRandomNickname">
+                                            {{item}}
+                                        </view>
+                                    </view>
+                                </view>
+
+                                <view class="step-tips">
+                                    <text>提示：昵称长度为2-12个字符，可使用中文、英文和数字</text>
+                                </view>
+                            </view>
+                        </scroll-view>
+                    </swiper-item>
+                </swiper>
+
+                <!-- 导航按钮 -->
+                <view class="step-navigation">
+                    <button class="nav-btn prev" wx:if="{{currentStep > 1}}" bindtap="prevStep">
+                        上一步
+                    </button>
+                    <button class="nav-btn next" wx:if="{{currentStep < 2}}" bindtap="nextStep" disabled="{{currentStep === 1 && !setupProgress.location}}">
+                        下一步
+                    </button>
+                    <button class="nav-btn complete" wx:if="{{currentStep === 2 && setupProgress.nickname}}" bindtap="completeSetup">
+                        完成设置
+                    </button>
+                </view>
+            </view>
+        </view>
+    </view>
+
+    <!-- 用户协议弹窗 -->
+    <view class="agreement-modal" wx:if="{{showAgreementModal}}">
+        <view class="modal-mask" bindtap="closeAgreementModal"></view>
+        <view class="modal-content agreement-content">
+            <view class="modal-header">
+                <text class="modal-title">{{modalTitle}}</text>
+                <text class="modal-close" bindtap="closeAgreementModal">×</text>
+            </view>
+            <view class="modal-body agreement-body">
+                <scroll-view scroll-y class="agreement-scroll">
+                    <text class="agreement-text-content">{{modalContent}}</text>
+                </scroll-view>
+            </view>
+            <view class="modal-footer">
+                <button class="modal-btn confirm" bindtap="closeAgreementModal">我知道了</button>
+            </view>
+        </view>
+    </view>
+</view>

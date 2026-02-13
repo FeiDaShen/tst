@@ -1,0 +1,299 @@
+<!-- pages/create-post/create-post.wxml -->
+<view class="create-post-container">
+  <!-- 自定义导航栏 -->
+  <view class="header">
+    <view class="back-btn" bindtap="goBack">
+      <text class="fa">&#xf060;</text>
+      <text class="back-text">返回</text>
+    </view>
+    <text class="header-title">发布新帖</text>
+    <view class="publish-btn" bindtap="submitPost">
+      <text>发布</text>
+    </view>
+  </view>
+
+  <!-- 主要内容区域 -->
+  <scroll-view 
+    class="content-scroll" 
+    scroll-y="{{true}}"
+    enable-back-to-top="{{true}}"
+    bindscroll="onPageScroll"
+  >
+    <!-- 文字描述区域 -->
+    <view class="form-section">
+      <view class="section-title">
+        <text class="fa">&#xf303;</text>
+        <text>分享你的想法</text>
+      </view>
+      <textarea
+        class="post-content-input"
+        placeholder="这一刻的想法..."
+        value="{{postContent}}"
+        bindinput="onContentInput"
+        maxlength="1000"
+        auto-height="{{true}}"
+        show-count="{{true}}"
+        cursor-spacing="30"
+      ></textarea>
+    </view>
+
+    <!-- 图片上传区域 -->
+    <view class="form-section">
+      <view class="section-title">
+        <text class="fa">&#xf03e;</text>
+        <text>添加图片 ({{selectedImages.length}}/9)</text>
+      </view>
+      <view class="images-grid">
+        <!-- 已选图片 -->
+        <view 
+          class="image-item" 
+          wx:for="{{selectedImages}}" 
+          wx:key="index"
+          data-index="{{index}}"
+          bindtap="previewImage"
+        >
+          <image 
+            src="{{item}}" 
+            mode="aspectFill"
+            class="image-preview"
+          ></image>
+          <view class="image-remove" catchtap="removeImage" data-index="{{index}}">
+            <text class="fa">&#xf00d;</text>
+          </view>
+        </view>
+        
+        <!-- 添加图片按钮 -->
+        <view 
+          class="add-image-btn" 
+          wx:if="{{selectedImages.length < 9}}"
+          bindtap="selectImages"
+        >
+          <text class="fa">&#xf067;</text>
+          <text class="add-text">添加图片</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 地理位置选择 -->
+    <view class="form-section">
+      <view class="section-title">
+        <text class="fa">&#xf3c5;</text>
+        <text>选择地点</text>
+      </view>
+      <picker 
+        mode="region" 
+        value="{{selectedRegion}}" 
+        bindchange="onRegionChange"
+        class="region-picker"
+      >
+        <view class="picker-content {{selectedRegion.length > 0 ? 'selected' : ''}}">
+          <text class="picker-label">
+            {{selectedRegion.length > 0 ? selectedRegion.join(' ') : '请选择省/市/区'}}
+          </text>
+          <text class="fa picker-arrow">&#xf107;</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 详细地址 -->
+    <view class="form-section">
+      <input
+        class="detail-address-input"
+        placeholder="详细地址 (可选)"
+        value="{{detailAddress}}"
+        bindinput="onDetailAddressInput"
+        maxlength="100"
+      />
+    </view>
+
+    <!-- 天气信息 -->
+    <view class="form-section">
+      <view class="section-title">
+        <text class="fa">&#xf0c2;</text>
+        <text>天气状况</text>
+      </view>
+      
+      <!-- 天气状况 -->
+      <view class="picker-group">
+        <picker 
+          mode="selector" 
+          range="{{weatherOptions}}" 
+          value="{{selectedWeather}}"
+          bindchange="onWeatherChange"
+        >
+          <view class="picker-item {{selectedWeather !== null ? 'selected' : ''}}">
+            <view class="picker-item-left">
+              <text class="fa">&#xf0c2;</text>
+              <text class="picker-item-label">天气</text>
+            </view>
+            <view class="picker-item-right">
+              <text class="picker-item-value">
+                {{selectedWeather !== null ? weatherOptions[selectedWeather] : '请选择'}}
+              </text>
+              <text class="fa picker-arrow">&#xf107;</text>
+            </view>
+          </view>
+        </picker>
+      </view>
+
+      <!-- 温度 -->
+      <view class="picker-group">
+        <picker 
+          mode="selector" 
+          range="{{temperatureOptions}}" 
+          value="{{selectedTemperature}}"
+          bindchange="onTemperatureChange"
+        >
+          <view class="picker-item {{selectedTemperature !== null ? 'selected' : ''}}">
+            <view class="picker-item-left">
+              <text class="fa">&#xf2c7;</text>
+              <text class="picker-item-label">温度</text>
+            </view>
+            <view class="picker-item-right">
+              <text class="picker-item-value">
+                {{selectedTemperature !== null ? temperatureOptions[selectedTemperature] + '°C' : '请选择'}}
+              </text>
+              <text class="fa picker-arrow">&#xf107;</text>
+            </view>
+          </view>
+        </picker>
+      </view>
+
+      <!-- 风向 -->
+      <view class="picker-group">
+        <picker 
+          mode="selector" 
+          range="{{windDirectionOptions}}" 
+          value="{{selectedWindDirection}}"
+          bindchange="onWindDirectionChange"
+        >
+          <view class="picker-item {{selectedWindDirection !== null ? 'selected' : ''}}">
+            <view class="picker-item-left">
+              <text class="fa">&#xf72e;</text>
+              <text class="picker-item-label">风向</text>
+            </view>
+            <view class="picker-item-right">
+              <text class="picker-item-value">
+                {{selectedWindDirection !== null ? windDirectionOptions[selectedWindDirection] : '请选择'}}
+              </text>
+              <text class="fa picker-arrow">&#xf107;</text>
+            </view>
+          </view>
+        </picker>
+      </view>
+
+      <!-- 风力 -->
+      <view class="picker-group">
+        <picker 
+          mode="selector" 
+          range="{{windScaleOptions}}" 
+          value="{{selectedWindScale}}"
+          bindchange="onWindScaleChange"
+        >
+          <view class="picker-item {{selectedWindScale !== null ? 'selected' : ''}}">
+            <view class="picker-item-left">
+              <text class="fa">&#xf773;</text>
+              <text class="picker-item-label">风力</text>
+            </view>
+            <view class="picker-item-right">
+              <text class="picker-item-value">
+                {{selectedWindScale !== null ? windScaleOptions[selectedWindScale] : '请选择'}}
+              </text>
+              <text class="fa picker-arrow">&#xf107;</text>
+            </view>
+          </view>
+        </picker>
+      </view>
+    </view>
+
+    <!-- 标签选择 -->
+    <view class="form-section">
+      <view class="section-title">
+        <text class="fa">&#xf02c;</text>
+        <text>添加标签 ({{selectedTags.length}}/3)</text>
+      </view>
+      <view class="tags-container">
+        <view 
+          class="tag-item {{selectedTags.includes(tag) ? 'selected' : ''}}" 
+          wx:for="{{availableTags}}"
+          wx:key="index"
+          data-tag="{{tag}}"
+          catchtap="toggleTag"
+        >
+          <text>{{tag}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 发布设置 -->
+    <view class="form-section">
+      <view class="section-title">
+        <text class="fa">&#xf013;</text>
+        <text>发布设置</text>
+      </view>
+      
+      <!-- 公开范围 -->
+      <view class="setting-item">
+        <view class="setting-label">
+          <text class="fa">&#xf06e;</text>
+          <text>公开范围</text>
+        </view>
+        <picker 
+          mode="selector" 
+          range="{{visibilityOptions}}" 
+          value="{{selectedVisibility}}"
+          bindchange="onVisibilityChange"
+        >
+          <view class="setting-value">
+            <text>{{visibilityOptions[selectedVisibility]}}</text>
+            <text class="fa setting-arrow">&#xf107;</text>
+          </view>
+        </picker>
+      </view>
+
+      <!-- 允许评论 -->
+      <view class="setting-item">
+        <view class="setting-label">
+          <text class="fa">&#xf075;</text>
+          <text>允许评论</text>
+        </view>
+        <switch 
+          checked="{{allowComments}}" 
+          bindchange="onAllowCommentsChange"
+          color="#07c160"
+        />
+      </view>
+
+      <!-- 显示位置 -->
+      <view class="setting-item">
+        <view class="setting-label">
+          <text class="fa">&#xf3c5;</text>
+          <text>显示位置</text>
+        </view>
+        <switch 
+          checked="{{showLocation}}" 
+          bindchange="onShowLocationChange"
+          color="#07c160"
+        />
+      </view>
+    </view>
+
+    <!-- 发布按钮底部固定 -->
+    <view class="bottom-spacer"></view>
+  </scroll-view>
+
+  <!-- 底部发布栏 -->
+  <view class="bottom-bar">
+    <view class="char-count">
+      <text>{{postContent.length}}/1000</text>
+    </view>
+    <button 
+      class="publish-bottom-btn {{isValidPost ? 'active' : ''}}"
+      bindtap="submitPost"
+      disabled="{{!isValidPost}}"
+    >
+      <text class="fa">&#xf1d8;</text>
+      <text>发布</text>
+    </button>
+  </view>
+</view>

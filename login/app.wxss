@@ -1,0 +1,235 @@
+/* app.wxss - 全局样式 */
+
+/* 导入ColorUI样式 */
+@import "colorui/main.wxss";
+@import "colorui/icon.wxss";
+
+/* 重置默认样式 */
+page {
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Segoe UI, Arial, Roboto, 'PingFang SC', 'miui', 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
+  background-color: #f8f8f8;
+  color: #333;
+  font-size: 28rpx;
+  line-height: 1.6;
+}
+
+/* 清除内外边距 */
+view, text, image, button, input, textarea, navigator {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 链接样式 */
+navigator {
+  color: #1989fa;
+  text-decoration: none;
+}
+
+/* 图片默认样式 */
+image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* 按钮重置 */
+button {
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+  border-radius: 0;
+  border: none;
+  line-height: 1;
+}
+
+button::after {
+  display: none;
+}
+
+/* 输入框重置 */
+input, textarea {
+  border: none;
+  outline: none;
+  background: none;
+}
+
+/* 公共工具类 */
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.text-bold {
+  font-weight: bold;
+}
+
+.text-primary {
+  color: #1989fa;
+}
+
+.text-success {
+  color: #07c160;
+}
+
+.text-warning {
+  color: #ff976a;
+}
+
+.text-danger {
+  color: #ee0a24;
+}
+
+.text-gray {
+  color: #969799;
+}
+
+.bg-white {
+  background-color: #fff;
+}
+
+.bg-primary {
+  background-color: #1989fa;
+}
+
+.bg-success {
+  background-color: #07c160;
+}
+
+.bg-warning {
+  background-color: #ff976a;
+}
+
+.bg-danger {
+  background-color: #ee0a24;
+}
+
+/* 内边距 */
+.p-10 { padding: 10rpx; }
+.p-20 { padding: 20rpx; }
+.p-30 { padding: 30rpx; }
+.p-40 { padding: 40rpx; }
+
+.pt-10 { padding-top: 10rpx; }
+.pr-10 { padding-right: 10rpx; }
+.pb-10 { padding-bottom: 10rpx; }
+.pl-10 { padding-left: 10rpx; }
+
+/* 外边距 */
+.m-10 { margin: 10rpx; }
+.m-20 { margin: 20rpx; }
+.m-30 { margin: 30rpx; }
+.m-40 { margin: 40rpx; }
+
+.mt-10 { margin-top: 10rpx; }
+.mr-10 { margin-right: 10rpx; }
+.mb-10 { margin-bottom: 10rpx; }
+.ml-10 { margin-left: 10rpx; }
+
+/* 边框 */
+.border {
+  border: 2rpx solid #e6e6e6;
+}
+
+.border-top {
+  border-top: 2rpx solid #e6e6e6;
+}
+
+.border-bottom {
+  border-bottom: 2rpx solid #e6e6e6;
+}
+
+.border-radius {
+  border-radius: 16rpx;
+}
+
+.border-radius-circle {
+  border-radius: 50%;
+}
+
+/* 阴影 */
+.shadow {
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
+}
+
+.shadow-light {
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+/* 安全区域适配（针对iPhoneX等有安全区域的设备） */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-area-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* 隐藏滚动条 */
+.hide-scrollbar ::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+  color: transparent;
+}
+
+/* 过渡动画 */
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}

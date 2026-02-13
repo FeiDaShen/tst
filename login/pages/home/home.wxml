@@ -1,0 +1,184 @@
+<view class="home-container">
+    <!-- 顶部跑马灯 -->
+    <view class="marquee-container">
+        <swiper class="marquee-swiper" vertical="{{true}}" autoplay="{{true}}" interval="{{3000}}" circular="{{true}}" duration="{{500}}">
+            <swiper-item wx:for="{{marqueeList}}" wx:key="id">
+                <view class="marquee-item" bindtap="handleMarqueeTap" data-id="{{item.id}}">
+                    <text class="fa marquee-icon">🔔</text>
+                    <text class="marquee-text">{{item.content}}</text>
+                </view>
+            </swiper-item>
+        </swiper>
+    </view>
+
+    <!-- 帖子列表 - 使用scroll-view并优化加载 -->
+    <scroll-view class="post-list" scroll-y="{{true}}" bindscrolltolower="loadMorePosts" enable-back-to-top="{{true}}" scroll-with-animation="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+        <!-- 帖子列表内容 -->
+        <view class="post-item" wx:for="{{postList}}" wx:key="id" bindtap="navigateToPostDetail" data-id="{{item.id}}">
+            <!-- 帖子内容 -->
+            <view class="post-content">
+                <!-- 帖子头部信息 -->
+                <view class="post-header">
+                    <image src="{{item.avatar || '/images/default-avatar.png'}}" class="post-avatar"></image>
+                    <view class="post-user-info">
+                        <text class="post-nickname">{{item.nickname}}</text>
+                        <view class="post-meta">
+                            <text class="post-time">{{item.time}}</text>
+                            <text class="fa location-icon">📍</text>
+                            <text class="post-location">{{item.location}}</text>
+                        </view>
+                    </view>
+                </view>
+
+                <!-- 帖子正文 -->
+                <view class="post-body">
+                    <text class="post-text">{{item.content}}</text>
+                    <!-- 图片展示（如果有） -->
+                    <view class="post-images" wx:if="{{item.images && item.images.length > 0}}">
+                        <image wx:for="{{item.images}}" wx:key="index" src="{{item}}" class="post-image" mode="aspectFill" data-index="{{index}}" data-images="{{item.images}}" bindtap="previewImage"></image>
+                    </view>
+                </view>
+
+                <!-- 打赏区域 -->
+                <view class="reward-section">
+                    <!-- 左：差评按钮 -->
+                    <view class="vote-left" bindtap="handleDownVote" data-index="{{index}}" data-id="{{item.id}}">
+                        <text class="fa vote-icon vote-down">👎</text>
+                        <text class="vote-count">{{item.downVotes}}</text>
+                    </view>
+
+                    <button class="reward-btn" bindtap="handleReward" data-id="{{item.id}}">
+                        <text class="fa reward-icon">🎁</text>
+                        <text>打赏</text>
+                    </button>
+
+                    <!-- 右：好评按钮 -->
+                    <view class="vote-right" bindtap="handleUpVote" data-index="{{index}}" data-id="{{item.id}}">
+                        <text class="fa vote-icon vote-up">👍</text>
+                        <text class="vote-count">{{item.upVotes}}</text>
+                    </view>
+                </view>
+            </view>
+        </view>
+
+        <!-- 优化后的加载状态提示 -->
+        <view class="load-more-container" wx:if="{{!isInitialLoading}}">
+            <!-- 加载中 -->
+            <view class="loading-wrapper" wx:if="{{loading && hasMore}}">
+                <view class="loading-content">
+                    <image src="/images/loading.gif" class="loading-icon" wx:if="{{loadingIcon}}"></image>
+                    <text class="loading-text">加载中...</text>
+                </view>
+            </view>
+
+            <!-- 没有更多数据 -->
+            <view class="no-more-wrapper" wx:if="{{!hasMore && postList.length > 0}}">
+                <view class="no-more-content">
+                    <text class="no-more-text">~ 没有更多内容了 ~</text>
+                </view>
+            </view>
+
+            <!-- 空数据状态 -->
+            <view class="empty-wrapper" wx:if="{{!loading && postList.length === 0}}">
+                <image src="/images/empty-icon.png" class="empty-icon"></image>
+                <text class="empty-text">暂无帖子，快来发布第一条吧！</text>
+            </view>
+        </view>
+
+        <!-- 初始加载 -->
+        <view class="initial-loading" wx:if="{{isInitialLoading}}">
+            <view class="skeleton-item" wx:for="{{6}}" wx:key="index">
+                <view class="skeleton-left">
+                    <view class="skeleton-circle"></view>
+                    <view class="skeleton-line small"></view>
+                </view>
+                <view class="skeleton-center">
+                    <view class="skeleton-header">
+                        <view class="skeleton-avatar"></view>
+                        <view class="skeleton-user">
+                            <view class="skeleton-line medium"></view>
+                            <view class="skeleton-line small"></view>
+                        </view>
+                    </view>
+                    <view class="skeleton-body">
+                        <view class="skeleton-line long"></view>
+                        <view class="skeleton-line"></view>
+                        <view class="skeleton-line short"></view>
+                    </view>
+                </view>
+                <view class="skeleton-right">
+                    <view class="skeleton-circle"></view>
+                    <view class="skeleton-line small"></view>
+                </view>
+            </view>
+        </view>
+    </scroll-view>
+
+    <!-- 原生tabBar会由小程序自动渲染，此处移除自定义tabBar -->
+
+    <!-- 右下角悬浮按钮组 -->
+    <view class="float-buttons-container">
+        <!-- 排序浮动按钮 -->
+        <view class="sort-float-btn" bindtap="toggleSortMenu">
+            <text class="sort-icon">🔍</text>
+        </view>
+
+        <!-- 发帖按钮 -->
+        <view class="add-post-btn" bindtap="goToPostEdit">
+            +
+        </view>
+    </view>
+
+
+    <!-- 排序选项菜单 -->
+    <view class="sort-menu" wx:if="{{showSortMenu}}">
+        <view class="sort-option" bindtap="changeSortType" data-type="time">
+            <text class="fa sort-option-icon">🕐</text>
+            <text class="sort-option-text">按时间优先</text>
+            <text class="fa sort-check" wx:if="{{currentSortType === 'time'}}">✓</text>
+        </view>
+        <view class="sort-option" bindtap="changeSortType" data-type="upvote">
+            <text class="fa sort-option-icon">👍</text>
+            <text class="sort-option-text">按好评优先</text>
+            <text class="fa sort-check" wx:if="{{currentSortType === 'upvote'}}">✓</text>
+        </view>
+    </view>
+
+    <!-- 打赏弹窗 -->
+    <view class="reward-modal" wx:if="{{showRewardModal}}">
+        <view class="modal-mask" bindtap="closeRewardModal"></view>
+        <view class="modal-content reward-content">
+            <view class="modal-header">
+                <text class="modal-title">打赏支持</text>
+                <text class="modal-close" bindtap="closeRewardModal">×</text>
+            </view>
+            <view class="modal-body">
+                <text class="reward-desc">选择打赏金额，支持优质内容创作</text>
+                <view class="reward-options">
+                    <view class="reward-option {{selectedReward === 1 ? 'selected' : ''}}" bindtap="selectReward" data-amount="1">
+                        <text>¥1</text>
+                    </view>
+                    <view class="reward-option {{selectedReward === 5 ? 'selected' : ''}}" bindtap="selectReward" data-amount="5">
+                        <text>¥5</text>
+                    </view>
+                    <view class="reward-option {{selectedReward === 10 ? 'selected' : ''}}" bindtap="selectReward" data-amount="10">
+                        <text>¥10</text>
+                    </view>
+                    <view class="reward-option {{selectedReward === 20 ? 'selected' : ''}}" bindtap="selectReward" data-amount="20">
+                        <text>¥20</text>
+                    </view>
+                </view>
+                <input class="custom-reward" placeholder="自定义金额" type="number" value="{{customReward}}" bindinput="handleCustomRewardInput" />
+            </view>
+            <view class="modal-footer">
+                <button class="modal-btn cancel" bindtap="closeRewardModal">取消</button>
+                <button class="modal-btn confirm" bindtap="confirmReward">确认打赏</button>
+            </view>
+        </view>
+    </view>
+
+    <!-- 在 home.wxml 底部添加 -->
+    <!-- <view class="cu-bar tabbar bg-white shadow foot"> -->
+        <!-- 其他内容 -->
+    <!-- </view> -->
+</view>
